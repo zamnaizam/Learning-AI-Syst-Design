@@ -1,6 +1,6 @@
 import os
 from typing import TypedDict, List
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.graph import StateGraph, START, END
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
@@ -19,6 +19,7 @@ llm = ChatGoogleGenerativeAI(
 
 def process(state: StateAgent) -> StateAgent:
     response = llm.invoke(state["msg"])
+    state['msg'].append(AIMessage(content=response.content))
     print(f"Response: {response.content}")
     return state
 
@@ -27,9 +28,15 @@ graph.add_node("process", process)
 graph.add_edge(START, "process")
 graph.add_edge("process", END)
 
+
 agent = graph.compile()
+
+conversation_history = []
+
 
 user_input = input("Enter: ")
 while user_input != "exit":
-    agent.invoke({"msg": [HumanMessage(content=user_input)]})
+    conversation_history.append(HumanMessage(content=user_input))
+    result = agent.invoke({"msg": conversation_history})
+    conversation_history = result["msg"]    # carry memory forward
     user_input = input("Enter: ")
