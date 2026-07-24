@@ -20,7 +20,7 @@ llm = ChatGoogleGenerativeAI(
 def process(state: StateAgent) -> StateAgent:
     response = llm.invoke(state["msg"])
     state['msg'].append(AIMessage(content=response.content))
-    print(f"Response: {response.content}")
+    print(f"Response: {response.content}\n")
     return state
 
 graph = StateGraph(StateAgent)
