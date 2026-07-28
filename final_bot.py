@@ -6,24 +6,14 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, To
 from operator import add as add_messages
 from langchain_google_genai import ChatGoogleGenerativeAI, Embeddings
 from langchain_community.document_loaders import PyPDFLoader
-try:
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-except Exception:
-    # Fallback: some langchain versions expose CharacterTextSplitter instead
-    try:
-        from langchain.text_splitter import CharacterTextSplitter as RecursiveCharacterTextSplitter
-    except Exception:
-        raise ImportError(
-            "Could not import RecursiveCharacterTextSplitter or CharacterTextSplitter from langchain.text_splitter. "
-            "Please install a compatible version of langchain."
-        )
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_core.tools import tool
 
 load_dotenv()
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash") # I want to minimize hallucination - temperature = 0 makes the model output more deterministic 
+    model="gemini-2.5-flash")
 
 # Our Embedding Model - has to also be compatible with the LLM
 embeddings = Embeddings(
