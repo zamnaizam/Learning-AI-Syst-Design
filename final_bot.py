@@ -4,20 +4,21 @@ from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated, Sequence
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, ToolMessage
 from operator import add as add_messages
-from langchain_google_genai import ChatGoogleGenerativeAI, Embeddings
+from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_core.tools import tool
 
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash")
+llm = ChatOpenAI(
+    model="gpt-4o", temperature = 0) # I want to minimize hallucination - temperature = 0 makes the model output more deterministic 
 
 # Our Embedding Model - has to also be compatible with the LLM
-embeddings = Embeddings(
-    model="text-embedding-gecko-001",
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-small",
 )
 
 
@@ -47,7 +48,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 pages_split = text_splitter.split_documents(pages) # We now apply this to our pages
 
-persist_directory = r"C:\Vaibhav\LangGraph_Book\LangGraphCourse\Agents"
+persist_directory = r"Z:\Zam\project p\Learning AI Syst Design\Document"
 collection_name = "stock_market"
 
 # If our collection does not exist in the directory, we create using the os command
